@@ -13,9 +13,9 @@ admin.site.register(TarifaHora)
 class CobroAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'vehiculo', 'espacio', 'tarifa', 'hora_entrada',
-        'hora_salida', 'horas', 'total', 'pagado', 'pagar_boton',
+        'hora_salida', 'horas', 'total', 'pagado', 'pagar_boton', 'eliminar_boton',
     )
-    readonly_fields = ('horas', 'total', 'fecha', 'pagar_boton')
+    readonly_fields = ('horas', 'total', 'fecha', 'pagar_boton', 'eliminar_boton')
     search_fields = ('vehiculo__placa', 'vehiculo__cliente__nombre')
 
     def pagar_boton(self, obj):
@@ -25,4 +25,11 @@ class CobroAdmin(admin.ModelAdmin):
         if obj and obj.pk and obj.pagado:
             return 'Pagado'
         return ''
-    pagar_boton.short_description = 'Acción'
+    pagar_boton.short_description = 'Pagar'
+
+    def eliminar_boton(self, obj):
+        if obj and obj.pk:
+            url = reverse('admin:cobros_cobro_delete', args=[obj.pk])
+            return format_html('<a class="button" href="{}">ELIMINAR</a>', url)
+        return ''
+    eliminar_boton.short_description = 'Eliminar'

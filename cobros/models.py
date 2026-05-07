@@ -55,7 +55,11 @@ class Cobro(models.Model):
     tarifa = models.ForeignKey(TarifaHora, on_delete=models.PROTECT)
 
     hora_entrada = models.DateTimeField(default=timezone.now)
-    hora_salida = models.DateTimeField(null=True, blank=True)
+    hora_salida = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Si el auto acaba de ingresar, no rellene hora de salida."
+    )
 
     horas = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
