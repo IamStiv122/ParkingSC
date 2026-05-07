@@ -60,15 +60,18 @@ class Cobro(models.Model):
     horas = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    pagado = models.BooleanField(default=False)
+
     fecha = models.DateField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        if self.hora_salida and self.hora_entrada:
+    def calcular_total(self):
+        if self.hora_salida:
             diferencia = self.hora_salida - self.hora_entrada
-            horas = Decimal(diferencia.total_seconds() / 3600).quantize(Decimal("0.01"))
-            self.horas = horas
-            self.total = (horas * self.tarifa.valor).quantize(Decimal("0.01"))
-        super().save(*args, **kwargs)
+
+            horas = Decimal(diferencia.total_seconds() / 3600)
+
+            self.horas = round(horas, 2)
+            self.total = round(horas * self.tarifa.valor, 2)
 
     def __str__(self):
         return f"Cobro #{self.id} - {self.vehiculo.placa}"
