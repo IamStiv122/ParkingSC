@@ -67,11 +67,14 @@ class Cobro(models.Model):
     def calcular_total(self):
         if self.hora_salida:
             diferencia = self.hora_salida - self.hora_entrada
-
-            horas = Decimal(diferencia.total_seconds() / 3600)
-
+            horas = Decimal(diferencia.total_seconds()) / Decimal(3600)
             self.horas = round(horas, 2)
             self.total = round(horas * self.tarifa.valor, 2)
+
+    def save(self, *args, **kwargs):
+        if self.hora_salida:
+            self.calcular_total()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Cobro #{self.id} - {self.vehiculo.placa}"
